@@ -63,8 +63,20 @@ public class HistoryService {
     }
 
     public Page<History> getHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
         Member member = memberRepository.findByMemberId(memberId);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
         return historyRepository.findByMember(member, pageable);
+    }
+
+    public Page<History> getRewardHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
+        Member member = memberRepository.findByMemberId(memberId);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
+        return historyRepository.findByMemberAndPointsGreaterThan(member, 0, pageable);
+    }
+
+    public Page<History> getRedeemHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
+        Member member = memberRepository.findByMemberId(memberId);
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
+        return historyRepository.findByMemberAndPointsLessThan(member, 0, pageable);
     }
 }

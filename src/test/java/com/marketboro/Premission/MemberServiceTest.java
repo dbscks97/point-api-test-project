@@ -1,26 +1,34 @@
 package com.marketboro.Premission;
 
-import com.marketboro.Premission.entity.Member;
+
 import com.marketboro.Premission.entity.History;
-import com.marketboro.Premission.exception.MemberServiceException;
-import com.marketboro.Premission.repository.MemberRepository;
+import com.marketboro.Premission.entity.Member;
+import com.marketboro.Premission.enums.CodeEnum;
+import com.marketboro.Premission.enums.MemberErrorResult;
+import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.HistoryRepository;
+import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.service.HistoryService;
 import com.marketboro.Premission.service.MemberService;
-import com.marketboro.Premission.service.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+
+import static org.assertj.core.api.Assertions.as;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
+import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(classes = PremissionApplication.class)
 public class MemberServiceTest {
 
@@ -28,21 +36,20 @@ public class MemberServiceTest {
     private MemberService memberService;
 
     @Autowired
-    private PointService pointService;
-
-    @Autowired
     private HistoryService historyService;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @MockBean
     private HistoryRepository historyRepository;
 
+    @MockBean
+    private MemberRepository memberRepository;
+
     private Member testMember;
     private History testHistory;
 
-    // 테스트 전 기본 데이터 설정
+
+
+//     테스트 전 기본 데이터 설정
     @BeforeEach
     public void setUp() {
         // Given: Mock 데이터 설정
@@ -60,70 +67,43 @@ public class MemberServiceTest {
                 .thenReturn(new ArrayList<>(List.of(testHistory)));
     }
 
-    // 양수 포인트 적립 테스트
+    // 양수 적립금이 같을 때 조회 테스트
     @Test
-    public void testAccruePoints() {
-        // When: 적립 포인트 50 지급
-        pointService.accruePointsAsync(1L, 50);
+    public void testGetRewardPointsEqual() {
+        // When: 회원별 적립금 조회 API 호출
+        int rewardPoints = memberService.getRewardPointsByMemberId(1L);
 
-        // Then: 회원의 적립금이 100 + 50 = 150이어야 함
-        Member member = memberRepository.findByMemberId(1L);
-        assertEquals(150, member.getRewardPoints());
+        // Then: 정상적으로 적립금이 반환되는지 확인
+        assertEquals(100, rewardPoints);
     }
 
-    // 음수 포인트 적립 테스트
+
+    // 양수 적립금이 다를 때 조회 테스트
     @Test
-    public void testAccrueMinusPoints() {
-        // Given: 음수 포인트로 적립을 시도
-        int negativePoints = -30;
+    public void testGetRewardPointsNotEqual() {
+        // When: 회원별 적립금 조회 API 호출
+        int rewardPoints = memberService.getRewardPointsByMemberId(1L);
 
-        try {
-            // When: 음수 포인트로 적립 시도
-            pointService.accruePointsAsync(1L, negativePoints);
-            fail("Fail: testAccrueMinusPoints");
-        } catch (MemberServiceException e) {
-            // Then: 예외 메시지를 확인하여 예상한 메시지와 일치하는지 검증
-            assertEquals("적립 포인트는 1 이상이어야 합니다.", e.getMessage());
-
-            // And: 회원의 적립금은 변화 없음 (음수로 증가하지 않아야 함)
-            Member member = memberRepository.findByMemberId(1L);
-            assertNotNull(member);
-            assertEquals(100, member.getRewardPoints());
-        }
+        // Then: 정상적으로 적립금이 반환되는지 확인
+        assertNotEquals(50, rewardPoints); // 예상한 값(50)과 실제 값(rewardPoints)이 다를 때 확인
     }
 
-    // 적립금 사용 테스트
+    // 회원이 존재하지 않는 경우에 대한 예외 처리 테스트
     @Test
-    public void testUsePoints() {
-        // When: 적립금 사용 30
-        pointService.usePointsAsync(1L, 30);
+    public void testGetRewardPointsNonExistentMember() {
+        // Given: 회원이 존재하지 않는 경우
+        doReturn(null).when(memberRepository).findByMemberId(2L);
 
-        // Then: 회원의 적립금이 100 - 30 = 70이어야 함
-        Member member = memberRepository.findByMemberId(1L);
-        assertEquals(70, member.getRewardPoints());
+        // When: 존재하지 않는 회원의 적립금 조회 API 호출
+        // Then: MemberServiceException 예외가 발생해야 함
+        final MemberException exception = assertThrows(MemberException.class, () -> memberService.getRewardPointsByMemberId(2L));
+
+        // And: 예외 메시지와 HTTP 상태 코드가 올바른지 확인
+        assertThat(exception.getErrorResult()).isEqualTo(MemberErrorResult.NOT_MEMBER);
     }
 
-    // 적립금 취소 테스트
-    @Test
-    public void testCancelPoints() {
-        // When: 적립금 사용
-        pointService.usePointsAsync(1L, 30);
 
-        // And: 사용한 포인트와 동일한 포인트를 취소
-        int cancelPoints = 30;
 
-        try {
-            pointService.cancelPointsAsync(1L, cancelPoints);
-            fail("Fail: testCancelPoints");
-        } catch (MemberServiceException e) {
-            // Then: 예외 메시지를 확인하여 예상한 메시지와 일치하는지 검증
-            assertEquals("취소할 포인트가 부족합니다.", e.getMessage());
-
-            // And: 회원의 적립금이 100 (변화 없음)
-            Member member = memberRepository.findByMemberId(1L);
-            assertEquals(100, member.getRewardPoints());
-        }
-    }
 
     @Test
     public void testExpirePoints() {

@@ -2,25 +2,15 @@ package com.marketboro.Premission.service;
 
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.entity.History;
-import com.marketboro.Premission.exception.MemberServiceException;
-import com.marketboro.Premission.messaging.senders.AccrueQueueSender;
-import com.marketboro.Premission.messaging.senders.CancelQueueSender;
-import com.marketboro.Premission.messaging.senders.UseQueueSender;
+import com.marketboro.Premission.enums.CodeEnum;
+import com.marketboro.Premission.enums.MemberErrorResult;
+import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.repository.HistoryRepository;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,8 +37,9 @@ public class MemberService {
         if (member != null) {
             return member.getRewardPoints();
         }
-        return 0;
+        throw new MemberException(MemberErrorResult.NOT_MEMBER);
     }
+
 
     public List<History> getHistoriesByMemberId(Long memberId) {
         Member member = memberRepository.findByMemberId(memberId);

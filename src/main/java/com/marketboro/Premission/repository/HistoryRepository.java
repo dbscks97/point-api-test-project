@@ -13,4 +13,7 @@ import java.util.List;
 public interface HistoryRepository extends JpaRepository<History, Long> {
     List<History> findByMemberOrderByHistoryDateDesc(Member member);
     Page<History> findByMember(Member member, Pageable pageable);
+    Page<History> findByMemberAndPointsGreaterThan(Member member, int points, Pageable pageable);
+    Page<History> findByMemberAndPointsLessThan(Member member, int points, Pageable pageable);
 }
+
