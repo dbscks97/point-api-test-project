@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum MemberErrorResult {
 
     DUPLICATED_MEMBER_REGISTER(HttpStatus.BAD_REQUEST, "Duplicated Member Register Request"),
-    NOT_MEMBER(HttpStatus.BAD_REQUEST, "Not a member"),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member Not Found"),
+    NOT_MEMBER_OWNER(HttpStatus.BAD_REQUEST,"Member Is Not Owner")
     ;
 
     private final HttpStatus httpStatus;

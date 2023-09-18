@@ -7,12 +7,16 @@ import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.repository.HistoryRepository;
+import com.marketboro.Premission.response.MemberResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,7 +41,7 @@ public class MemberService {
         if (member != null) {
             return member.getRewardPoints();
         }
-        throw new MemberException(MemberErrorResult.NOT_MEMBER);
+        throw new MemberException(MemberErrorResult.MEMBER_NOT_FOUND);
     }
 
 
@@ -49,10 +53,20 @@ public class MemberService {
         return Collections.emptyList();
     }
 
-    public boolean isValidMemberId(Long memberId) {
-        // 회원 유효성 검증 로직을 구현
-        Member member = memberRepository.findByMemberId(memberId);
-        return member != null;
+    public MemberResponse getPoints(Long memberId, String memberName) {
+        final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
+        final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
+
+        if (!member.getMemberName().equals(memberName)) {
+            throw new MemberException(MemberErrorResult.NOT_MEMBER_OWNER);
+        }
+
+        return MemberResponse.builder()
+                .memberId(member.getMemberId())
+                .memberName(member.getMemberName())
+                .rewardPoints(member.getRewardPoints())
+                .build();
+
     }
 
 
