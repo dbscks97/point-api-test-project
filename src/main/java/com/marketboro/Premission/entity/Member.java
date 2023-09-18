@@ -22,6 +22,7 @@ public class Member {
     @Column(nullable = false, length = 20)
     private String memberName;
 
+
     @Column(nullable = false)
     @ColumnDefault("0")
     private int rewardPoints;

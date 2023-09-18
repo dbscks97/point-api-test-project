@@ -2,7 +2,6 @@ package com.marketboro.Premission.service;
 
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.entity.History;
-import com.marketboro.Premission.enums.CodeEnum;
 import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.MemberRepository;
@@ -35,15 +34,6 @@ public class MemberService {
         this.historyRepository = historyRepository;
 
     }
-
-    public int getRewardPointsByMemberId(Long memberId) {
-        Member member = memberRepository.findByMemberId(memberId);
-        if (member != null) {
-            return member.getRewardPoints();
-        }
-        throw new MemberException(MemberErrorResult.MEMBER_NOT_FOUND);
-    }
-
 
     public List<History> getHistoriesByMemberId(Long memberId) {
         Member member = memberRepository.findByMemberId(memberId);

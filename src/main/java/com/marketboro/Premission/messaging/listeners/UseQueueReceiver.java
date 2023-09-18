@@ -1,19 +1,17 @@
 package com.marketboro.Premission.messaging.listeners;
 
-import com.marketboro.Premission.service.MemberService;
-import com.marketboro.Premission.service.PointService;
+import com.marketboro.Premission.service.AccruePointService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UseQueueReceiver {
-    private final PointService pointService;
+    private final AccruePointService accruePointService;
 
     @Autowired
-    public UseQueueReceiver(PointService pointService) {
-        this.pointService = pointService;
+    public UseQueueReceiver(AccruePointService accruePointService) {
+        this.accruePointService = accruePointService;
     }
 
     @RabbitListener(queues = "${rabbitmq.queue2}")
@@ -27,6 +25,6 @@ public class UseQueueReceiver {
         int pointsToUse = Integer.parseInt(parts[1].trim());
 
         // 사용 이벤트 처리
-        pointService.usePointsAsync(memberId, pointsToUse);
+        accruePointService.usePointsAsync(memberId, pointsToUse);
     }
 }

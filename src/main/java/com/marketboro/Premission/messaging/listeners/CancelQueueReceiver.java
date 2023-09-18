@@ -1,19 +1,17 @@
 package com.marketboro.Premission.messaging.listeners;
 
-import com.marketboro.Premission.service.MemberService;
-import com.marketboro.Premission.service.PointService;
+import com.marketboro.Premission.service.AccruePointService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CancelQueueReceiver {
-    private PointService pointService;
+    private AccruePointService accruePointService;
 
     @Autowired
-    public CancelQueueReceiver(PointService pointService) {
-        this.pointService = pointService;
+    public CancelQueueReceiver(AccruePointService accruePointService) {
+        this.accruePointService = accruePointService;
     }
 
     @RabbitListener(queues = "${rabbitmq.queue3}")
@@ -27,7 +25,7 @@ public class CancelQueueReceiver {
         int pointsToCancel = Integer.parseInt(parts[1].trim());
 
         // 취소 이벤트 처리
-        pointService.cancelPointsAsync(memberId, pointsToCancel);
+        accruePointService.cancelPointsAsync(memberId, pointsToCancel);
     }
 }
 

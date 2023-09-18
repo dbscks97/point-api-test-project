@@ -5,9 +5,8 @@ import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.response.MemberResponse;
 import com.marketboro.Premission.service.MemberService;
-import com.marketboro.Premission.service.PointService;
+import com.marketboro.Premission.service.AccruePointService;
 import jakarta.validation.constraints.Min;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +19,16 @@ import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEA
 @RestController
 public class MemberController {
     private final MemberService memberService;
-    private final PointService pointService;
+    private final AccruePointService accruePointService;
 
     @Autowired
-    public MemberController(MemberService memberService, PointService pointService) {
+    public MemberController(MemberService memberService, AccruePointService accruePointService) {
         this.memberService = memberService;
-        this.pointService = pointService;
+        this.accruePointService = accruePointService;
     }
 
     //회원별 적립금 합계 조회 API
-    @GetMapping("/api/v1/points/{memberId}")
+    @GetMapping("/api/v1/{memberId}/points")
     public ResponseEntity<?> getPoints(@RequestHeader(MEMBER_ID_HEADER) String memberName, @PathVariable Long memberId) {
         if (memberId == null) {
             return ResponseEntity.badRequest().build();
@@ -49,6 +48,13 @@ public class MemberController {
         }
     }
 
+    //회원별 적립금 적립 API
+    @PostMapping("/api/v1/{memberId}/accrue")
+    public ResponseEntity<Void> accruePoints(@RequestHeader(MEMBER_ID_HEADER) String memberName, @PathVariable Long memberId, @RequestParam @Min(1) int points) {
+
+        accruePointService.accruePointsAsync(memberId, memberName,points);
+        return ResponseEntity.noContent().build();
+    }
 
     //회원별 적립금 적립/사용 내역 조회 API
     @GetMapping("/{memberId}/histories")
@@ -56,24 +62,17 @@ public class MemberController {
         return memberService.getHistoriesByMemberId(memberId);
     }
 
-    //회원별 적립금 적립 API
-    @PostMapping("/{memberId}/accrue")
-    public void accruePoints(@PathVariable Long memberId, @RequestParam @Min(1) int points) {
-        if (points <= 0) {
-            throw new IllegalArgumentException("적립 포인트는 1 이상이어야 합니다.");
-        }
-        pointService.accruePointsAsync(memberId, points);
-    }
+
 
     //회원별 적립금 사용 API
     @PostMapping("/{memberId}/use")
     public void usePoints(@PathVariable Long memberId, @RequestParam int pointsToUse) {
-        pointService.usePointsAsync(memberId, pointsToUse);
+        accruePointService.usePointsAsync(memberId, pointsToUse);
     }
 
     //회원별 적립금 취소 API
     @PostMapping("/{memberId}/cancel")
     public void cancelPoints(@PathVariable Long memberId, @RequestParam int pointsToCancel) {
-        pointService.cancelPointsAsync(memberId, pointsToCancel);
+        accruePointService.cancelPointsAsync(memberId, pointsToCancel);
     }
 }

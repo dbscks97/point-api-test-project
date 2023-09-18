@@ -11,5 +11,5 @@ import lombok.RequiredArgsConstructor;
 public class MemberResponse {
     private final Long memberId;
     private final String memberName;
-    private final int rewardPoints;
+    private final Integer rewardPoints;
 }

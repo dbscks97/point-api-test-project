@@ -11,5 +11,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor(force = true)
 public class MemberRequest {
     private final Long memberId;
+    private final String memberName;
+    private final Integer rewardPoints;
 
 }
