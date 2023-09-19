@@ -8,6 +8,8 @@ import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.response.MemberResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,14 +35,6 @@ public class MemberService {
         this.memberRepository = memberRepository;
         this.historyRepository = historyRepository;
 
-    }
-
-    public List<History> getHistoriesByMemberId(Long memberId) {
-        Member member = memberRepository.findByMemberId(memberId);
-        if (member != null) {
-            return historyRepository.findByMemberOrderByHistoryDateDesc(member);
-        }
-        return Collections.emptyList();
     }
 
     public MemberResponse getPoints(Long memberId, String memberName) {

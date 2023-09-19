@@ -2,12 +2,12 @@ package com.marketboro.Premission.service;
 
 import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.entity.Member;
+import com.marketboro.Premission.enums.MemberErrorResult;
+import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,21 +62,18 @@ public class HistoryService {
         }
     }
 
-    public Page<History> getHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
+    public Page<History> getPagedUsageHistoryByMemberId(Long memberId, String memberName, Pageable pageable) {
         Member member = memberRepository.findByMemberId(memberId);
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
-        return historyRepository.findByMember(member, pageable);
+        if (member == null) {
+            throw new MemberException(MemberErrorResult.MEMBER_NOT_FOUND);
+        }
+
+        // 본인 확인 로직 추가
+        if (!member.getMemberName().equals(memberName)) {
+            throw new MemberException(MemberErrorResult.NOT_MEMBER_OWNER);
+        }
+
+        return historyRepository.findByMemberMemberIdAndMemberMemberNameOrderByHistoryDateDesc(memberId, memberName, pageable);
     }
 
-    public Page<History> getRewardHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
-        Member member = memberRepository.findByMemberId(memberId);
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
-        return historyRepository.findByMemberAndPointsGreaterThan(member, 0, pageable);
-    }
-
-    public Page<History> getRedeemHistoryByMemberIdPaged(Long memberId, int page, int pageSize) {
-        Member member = memberRepository.findByMemberId(memberId);
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "historyDate"));
-        return historyRepository.findByMemberAndPointsLessThan(member, 0, pageable);
-    }
 }

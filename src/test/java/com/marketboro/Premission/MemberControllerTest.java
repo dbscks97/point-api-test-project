@@ -1,6 +1,8 @@
 package com.marketboro.Premission;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.marketboro.Premission.controller.MemberController;
 import com.marketboro.Premission.enums.MemberErrorResult;
@@ -8,6 +10,7 @@ import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.request.MemberRequest;
 import com.marketboro.Premission.response.MemberResponse;
 import com.marketboro.Premission.service.AccruePointService;
+import com.marketboro.Premission.service.HistoryService;
 import com.marketboro.Premission.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,16 +19,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEADER;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
 
 @ExtendWith(MockitoExtension.class)
 public class MemberControllerTest {
@@ -35,23 +46,37 @@ public class MemberControllerTest {
 
     @Mock
     private MemberService memberService;
+    @Mock
+    private HistoryService historyService;
 
     @Mock
     private AccruePointService accruePointService;
+    private Pageable pageable;
+
     private MockMvc mockMvc;
 
     private Gson gson;
+    private ObjectMapper objectMapper;
 
     private MemberRequest memberRequest(int rewardPoints) {
         return MemberRequest.builder()
                 .rewardPoints(rewardPoints)
                 .build();
     }
+
+    // 이 메서드는 결과에서 다음 페이지 토큰을 추출합니다.
+    private String extractNextPageToken(ResultActions resultActions) throws Exception {
+        String content = resultActions.andReturn().getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(content);
+        return jsonNode.path("nextPageToken").asText();
+    }
     @BeforeEach
     public void init(){
         gson = new Gson();
         mockMvc = MockMvcBuilders.standaloneSetup(memberController)
                 .build();
+        pageable = PageRequest.of(0,10);
+        objectMapper = new ObjectMapper();
     }
     @Test
     @DisplayName("[API][GET] 회원별 적립금 합계 조회 - 회원 식별값이 헤더에 없음")
@@ -164,6 +189,71 @@ public class MemberControllerTest {
     }
 
 
+    @Test
+    @DisplayName("[API][GET] 회원별 적립금/사용 내역 조회[페이징] - 회원 식별값이 헤더에 없음")
+    public void 내역조회실패_회원식별값이헤더에없음() throws Exception{
+        // given
+        final String url = "/api/v1/-1/point-history";
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+    @Test
+    @DisplayName("[API][GET] 회원별 적립금/사용 내역 조회[페이징] - 성공")
+    public void 적립금사용내역조회성공() throws Exception {
+        // given
+        final String url = "/api/v1/-1/point-history";
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header(MEMBER_ID_HEADER, "12345")
+                        .param("page", String.valueOf(pageable.getPageNumber()))
+                        .param("size", String.valueOf(pageable.getPageSize()))
+        );
+
+        // then
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[API][GET] 회원별 적립금/사용 내역 조회[페이징] - 다음 페이지 조회")
+    public void 적립금사용내역_다음페이지조회() throws Exception {
+        // given
+        final String url = "/api/v1/-1/point-history";
+        final int pageSize = 10;
+
+        // when
+        // 첫 번째 페이지를 조회합니다.
+        final ResultActions firstPageResult = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header(MEMBER_ID_HEADER, "12345")
+                        .param("page", "0") // 첫 번째 페이지
+                        .param("size", String.valueOf(pageSize))
+        );
+
+        // then
+        firstPageResult.andExpect(status().isOk());
+
+        // 첫 번째 페이지 결과에서 다음 페이지 토큰을 추출합니다.
+        String nextPageToken = extractNextPageToken(firstPageResult);
+
+        // 다음 페이지를 조회합니다.
+        final ResultActions nextPageResult = mockMvc.perform(
+                MockMvcRequestBuilders.get(url)
+                        .header(MEMBER_ID_HEADER, "12345")
+                        .param("page", nextPageToken) // 다음 페이지 토큰 사용
+                        .param("size", String.valueOf(pageSize))
+        );
+
+        // then
+        nextPageResult.andExpect(status().isOk());
+    }
 
 
 }

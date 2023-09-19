@@ -11,9 +11,8 @@ import java.util.List;
 
 @Repository
 public interface HistoryRepository extends JpaRepository<History, Long> {
-    List<History> findByMemberOrderByHistoryDateDesc(Member member);
-    Page<History> findByMember(Member member, Pageable pageable);
-    Page<History> findByMemberAndPointsGreaterThan(Member member, int points, Pageable pageable);
-    Page<History> findByMemberAndPointsLessThan(Member member, int points, Pageable pageable);
+    // 회원 별 포인트 적립/사용 내역 조회 (페이징 처리)
+    Page<History> findByMemberMemberIdAndMemberMemberNameOrderByHistoryDateDesc(Long memberId, String memberName, Pageable pageable);
 }
+
 

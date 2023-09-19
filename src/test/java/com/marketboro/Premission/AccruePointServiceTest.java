@@ -28,6 +28,8 @@ public class AccruePointServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private HistoryRepository historyRepository;
 
     @Mock
     private AccrueQueueSender accrueQueueSender;
