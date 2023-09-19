@@ -8,8 +8,8 @@ import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.response.MemberResponse;
-import com.marketboro.Premission.service.HistoryService;
-import com.marketboro.Premission.service.MemberService;
+import com.marketboro.Premission.service.HistoryServiceImpl;
+import com.marketboro.Premission.service.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @ExtendWith(MockitoExtension.class)
-public class MemberServiceTest {
+public class MemberServiceImplTest {
 
     @Mock
     private HistoryRepository historyRepository;
@@ -37,10 +37,10 @@ public class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberServiceImpl memberServiceImpl;
 
     @InjectMocks
-    private HistoryService historyService;
+    private HistoryServiceImpl historyServiceImpl;
 
 
 
@@ -66,7 +66,7 @@ public class MemberServiceTest {
 
 
         // when
-        MemberResponse result = memberService.getPoints(testMember.getMemberId(),testMember.getMemberName() );
+        MemberResponse result = memberServiceImpl.getPoints(testMember.getMemberId(),testMember.getMemberName() );
 
         // then
         assertThat(result.getRewardPoints()).isEqualTo(testMember.getRewardPoints());
@@ -85,7 +85,7 @@ public class MemberServiceTest {
         when(memberRepository.findByMemberId(testMember.getMemberId())).thenReturn(differentRewardMember);
 
         // when
-        MemberResponse result = memberService.getPoints(testMember.getMemberId(), testMember.getMemberName());
+        MemberResponse result = memberServiceImpl.getPoints(testMember.getMemberId(), testMember.getMemberName());
 
         // then
         assertNotEquals(testMember.getRewardPoints(), result.getRewardPoints());
@@ -100,7 +100,7 @@ public class MemberServiceTest {
         when(memberRepository.findByMemberId(testMember.getMemberId())).thenReturn(testMember);
 
         // when
-        MemberException result = assertThrows(MemberException.class, () -> memberService.getPoints(testMember.getMemberId(), "notowner"));
+        MemberException result = assertThrows(MemberException.class, () -> memberServiceImpl.getPoints(testMember.getMemberId(), "notowner"));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(MemberErrorResult.NOT_MEMBER_OWNER);
@@ -122,7 +122,7 @@ public class MemberServiceTest {
         when(historyRepository.findAll()).thenReturn(expiredHistories);
 
         // when
-        historyService.expirePoints();
+        historyServiceImpl.expirePoints();
 
         // then
         verify(historyRepository, times(1)).delete(expiredHistory);
@@ -143,7 +143,7 @@ public class MemberServiceTest {
         when(historyRepository.findAll()).thenReturn(validHistories);
 
         // when
-        historyService.expirePoints();
+        historyServiceImpl.expirePoints();
 
         // then
         verify(historyRepository, never()).delete(any());

@@ -6,7 +6,7 @@ import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
-import com.marketboro.Premission.service.HistoryService;
+import com.marketboro.Premission.service.HistoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class HistoryServiceTest {
+public class HistoryServiceImplTest {
 
     @InjectMocks
-    private HistoryService historyService;
+    private HistoryServiceImpl historyServiceImpl;
 
     @Mock
     private HistoryRepository historyRepository;
@@ -54,7 +54,7 @@ public class HistoryServiceTest {
         when(memberRepository.findByMemberId(testMember.getMemberId())).thenReturn(null);
 
         // when
-        final MemberException result = assertThrows(MemberException.class, () -> historyService.getPagedUsageHistoryByMemberId(testMember.getMemberId(), testMember.getMemberName(), pageable));
+        final MemberException result = assertThrows(MemberException.class, () -> historyServiceImpl.getPagedUsageHistoryByMemberId(testMember.getMemberId(), testMember.getMemberName(), pageable));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(MemberErrorResult.MEMBER_NOT_FOUND);
@@ -67,7 +67,7 @@ public class HistoryServiceTest {
         when(memberRepository.findByMemberId(testMember.getMemberId())).thenReturn(testMember);
 
         // when
-        final MemberException result = assertThrows(MemberException.class, () -> historyService.getPagedUsageHistoryByMemberId(testMember.getMemberId(), "notowner", pageable));
+        final MemberException result = assertThrows(MemberException.class, () -> historyServiceImpl.getPagedUsageHistoryByMemberId(testMember.getMemberId(), "notowner", pageable));
 
         // then
         assertThat(result.getErrorResult()).isEqualTo(MemberErrorResult.NOT_MEMBER_OWNER);
@@ -85,7 +85,7 @@ public class HistoryServiceTest {
         when(historyRepository.findByMemberMemberIdAndMemberMemberNameOrderByHistoryDateDesc(testMember.getMemberId(),testMember.getMemberName(), pageable)).thenReturn(new PageImpl<>(historyList));
 
         // when
-        Page<History> result = historyService.getPagedUsageHistoryByMemberId(testMember.getMemberId(), testMember.getMemberName(), pageable);
+        Page<History> result = historyServiceImpl.getPagedUsageHistoryByMemberId(testMember.getMemberId(), testMember.getMemberName(), pageable);
 
         // then
         verify(memberRepository, times(1)).findByMemberId(testMember.getMemberId());

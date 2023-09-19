@@ -4,14 +4,13 @@ import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.response.MemberResponse;
-import com.marketboro.Premission.service.HistoryService;
-import com.marketboro.Premission.service.MemberService;
-import com.marketboro.Premission.service.AccruePointService;
+import com.marketboro.Premission.service.HistoryServiceImpl;
+import com.marketboro.Premission.service.MemberServiceImpl;
+import com.marketboro.Premission.service.AccruePointServiceImpl;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,15 +19,15 @@ import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEA
 
 @RestController
 public class MemberController {
-    private final MemberService memberService;
-    private final AccruePointService accruePointService;
-    private final HistoryService historyService;
+    private final MemberServiceImpl memberServiceImpl;
+    private final AccruePointServiceImpl accruePointService;
+    private final HistoryServiceImpl historyServiceImpl;
 
     @Autowired
-    public MemberController(MemberService memberService, AccruePointService accruePointService, HistoryService historyService) {
-        this.memberService = memberService;
+    public MemberController(MemberServiceImpl memberServiceImpl, AccruePointServiceImpl accruePointService, HistoryServiceImpl historyServiceImpl) {
+        this.memberServiceImpl = memberServiceImpl;
         this.accruePointService = accruePointService;
-        this.historyService = historyService;
+        this.historyServiceImpl = historyServiceImpl;
     }
 
     //회원별 적립금 합계 조회 API
@@ -39,7 +38,7 @@ public class MemberController {
         }
 
         try {
-            MemberResponse response = memberService.getPoints(memberId, memberName);
+            MemberResponse response = memberServiceImpl.getPoints(memberId, memberName);
             return ResponseEntity.ok(response);
         } catch (MemberException e) {
             if (e.getErrorResult() == MemberErrorResult.MEMBER_NOT_FOUND) {
@@ -68,7 +67,7 @@ public class MemberController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<History> historyPage = historyService.getPagedUsageHistoryByMemberId(memberId, memberName, PageRequest.of(page, size));
+        Page<History> historyPage = historyServiceImpl.getPagedUsageHistoryByMemberId(memberId, memberName, PageRequest.of(page, size));
         return ResponseEntity.ok(historyPage);
     }
 

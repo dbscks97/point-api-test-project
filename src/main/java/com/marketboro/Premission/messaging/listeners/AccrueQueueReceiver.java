@@ -1,16 +1,16 @@
 package com.marketboro.Premission.messaging.listeners;
 
-import com.marketboro.Premission.service.AccruePointService;
+import com.marketboro.Premission.service.AccruePointServiceImpl;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AccrueQueueReceiver {
-    private final AccruePointService accruePointService;
+    private final AccruePointServiceImpl accruePointService;
 
     @Autowired
-    public AccrueQueueReceiver(AccruePointService accruePointService) {
+    public AccrueQueueReceiver(AccruePointServiceImpl accruePointService) {
         this.accruePointService = accruePointService;
     }
 

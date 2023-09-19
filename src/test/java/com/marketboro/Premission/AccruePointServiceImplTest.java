@@ -7,7 +7,7 @@ import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.messaging.senders.AccrueQueueSender;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
-import com.marketboro.Premission.service.AccruePointService;
+import com.marketboro.Premission.service.AccruePointServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class AccruePointServiceTest {
+public class AccruePointServiceImplTest {
 
     @InjectMocks
-    private AccruePointService accruePointService;
+    private AccruePointServiceImpl accruePointService;
 
     @Mock
     private MemberRepository memberRepository;

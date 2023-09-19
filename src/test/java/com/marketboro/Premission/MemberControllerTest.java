@@ -9,9 +9,9 @@ import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.request.MemberRequest;
 import com.marketboro.Premission.response.MemberResponse;
-import com.marketboro.Premission.service.AccruePointService;
-import com.marketboro.Premission.service.HistoryService;
-import com.marketboro.Premission.service.MemberService;
+import com.marketboro.Premission.service.AccruePointServiceImpl;
+import com.marketboro.Premission.service.HistoryServiceImpl;
+import com.marketboro.Premission.service.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -27,9 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEADER;
 import static org.mockito.Mockito.doReturn;
@@ -45,12 +41,12 @@ public class MemberControllerTest {
     private MemberController memberController;
 
     @Mock
-    private MemberService memberService;
+    private MemberServiceImpl memberServiceImpl;
     @Mock
-    private HistoryService historyService;
+    private HistoryServiceImpl historyServiceImpl;
 
     @Mock
-    private AccruePointService accruePointService;
+    private AccruePointServiceImpl accruePointService;
     private Pageable pageable;
 
     private MockMvc mockMvc;
@@ -99,7 +95,7 @@ public class MemberControllerTest {
         // given
         final String url = "/api/v1/-1/points";
         doThrow(new MemberException(MemberErrorResult.MEMBER_NOT_FOUND))
-                .when(memberService)
+                .when(memberServiceImpl)
                 .getPoints(-1L, "12345");
 
         // when
@@ -119,7 +115,7 @@ public class MemberControllerTest {
         final String url = "/api/v1/-1/points";
         doReturn(
                 MemberResponse.builder().build()
-        ).when(memberService).getPoints(-1L,"12345");
+        ).when(memberServiceImpl).getPoints(-1L,"12345");
 
         // when
         final ResultActions resultActions = mockMvc.perform(
