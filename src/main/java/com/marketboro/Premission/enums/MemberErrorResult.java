@@ -13,6 +13,7 @@ public enum MemberErrorResult {
     NOT_MEMBER_OWNER(HttpStatus.BAD_REQUEST,"Member Is Not Owner"),
     UNKNOWN_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR,"Unknown Exception"),
     NEGATIVE_POINTS(HttpStatus.BAD_REQUEST, "Negative Points"),
+    INSUFFICIENT_POINTS(HttpStatus.BAD_REQUEST, "Insufficient Points"),
 
     ;
 

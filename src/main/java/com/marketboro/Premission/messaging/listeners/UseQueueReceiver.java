@@ -22,9 +22,10 @@ public class UseQueueReceiver {
         // 메시지를 분석하여 사용 포인트를 처리
         String[] parts = message.split("-");
         Long memberId = Long.parseLong(parts[0].trim());
-        int pointsToUse = Integer.parseInt(parts[1].trim());
+        String memberName = parts[1].trim();
+        int pointsToUse = Integer.parseInt(parts[2].trim());
 
         // 사용 이벤트 처리
-        usePointServiceImpl.usePointsAsync(memberId, pointsToUse);
+        usePointServiceImpl.usePointsAsync(memberId, memberName, pointsToUse);
     }
 }
