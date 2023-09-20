@@ -4,10 +4,7 @@ import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
 import com.marketboro.Premission.response.MemberResponse;
-import com.marketboro.Premission.service.HistoryServiceImpl;
-import com.marketboro.Premission.service.MemberServiceImpl;
-import com.marketboro.Premission.service.AccruePointServiceImpl;
-import com.marketboro.Premission.service.UsePointServiceImpl;
+import com.marketboro.Premission.service.*;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.ExecutionException;
-
 import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEADER;
 
 @RestController
@@ -25,13 +20,15 @@ public class MemberController {
     private final MemberServiceImpl memberServiceImpl;
     private final AccruePointServiceImpl accruePointService;
     private final UsePointServiceImpl usePointService;
+    private final CancelPointServiceImpl cancelPointService;
     private final HistoryServiceImpl historyServiceImpl;
 
     @Autowired
-    public MemberController(MemberServiceImpl memberServiceImpl, AccruePointServiceImpl accruePointService, UsePointServiceImpl usePointService, HistoryServiceImpl historyServiceImpl) {
+    public MemberController(MemberServiceImpl memberServiceImpl, AccruePointServiceImpl accruePointService, UsePointServiceImpl usePointService, CancelPointServiceImpl cancelPointService, HistoryServiceImpl historyServiceImpl) {
         this.memberServiceImpl = memberServiceImpl;
         this.accruePointService = accruePointService;
         this.usePointService = usePointService;
+        this.cancelPointService = cancelPointService;
         this.historyServiceImpl = historyServiceImpl;
     }
 
@@ -92,8 +89,9 @@ public class MemberController {
     }
 
     //회원별 적립금 취소 API
-//    @PostMapping("/{memberId}/cancel")
-//    public void cancelPoints(@PathVariable Long memberId, @RequestParam int pointsToCancel) {
-//        accruePointService.cancelPointsAsync(memberId, pointsToCancel);
-//    }
+    @PostMapping("/api/v1/{memberId}/cancel")
+    public ResponseEntity<Void> cancelPoints(@RequestHeader(MEMBER_ID_HEADER) String memberName, @PathVariable Long memberId, @RequestParam int pointsToCancel, int deductPointNo) {
+        cancelPointService.cancelPointsAsync(memberId, memberName, pointsToCancel,deductPointNo);
+        return ResponseEntity.noContent().build();
+    }
 }

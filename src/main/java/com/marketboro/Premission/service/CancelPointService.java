@@ -3,5 +3,5 @@ package com.marketboro.Premission.service;
 import java.util.concurrent.CompletableFuture;
 
 public interface CancelPointService {
-    CompletableFuture<Void> cancelPointsAsync(Long memberId, int pointsToCancel);
+    CompletableFuture<Void> cancelPointsAsync(Long memberId, String memberName, int pointsToCancel,int deductPointNo);
 }

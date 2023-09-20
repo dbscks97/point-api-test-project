@@ -23,8 +23,9 @@ public class History {
     @Temporal(TemporalType.TIMESTAMP)
     private Date historyDate;
 
-    private int priority;
+    private String type;
 
+    private int deductPointNo;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 

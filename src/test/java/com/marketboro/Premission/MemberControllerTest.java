@@ -8,20 +8,17 @@ import com.marketboro.Premission.controller.MemberController;
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
+import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.request.MemberRequest;
 import com.marketboro.Premission.response.MemberResponse;
-import com.marketboro.Premission.service.AccruePointServiceImpl;
-import com.marketboro.Premission.service.HistoryServiceImpl;
-import com.marketboro.Premission.service.MemberServiceImpl;
-import com.marketboro.Premission.service.UsePointServiceImpl;
+import com.marketboro.Premission.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,7 +52,11 @@ public class MemberControllerTest {
     @Mock
     private UsePointServiceImpl usePointService;
     @Mock
+    private CancelPointServiceImpl cancelPointService;
+    @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private HistoryRepository historyRepository;
     private Pageable pageable;
 
     private MockMvc mockMvc;
@@ -302,13 +303,58 @@ public class MemberControllerTest {
         final String url = "/api/v1/1/use";
 
         Member member = new Member();
-        member.setRewardPoints(200); // 사용자의 보유 포인트 설정
+        member.setRewardPoints(200);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders.post(url)
                         .header(MEMBER_ID_HEADER, "12345")
                         .content(gson.toJson(memberRequest(300)))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+    @Test
+    @DisplayName("[API][POST] 회원별 적립금 사용 취소 - 성공")
+    public void 회원별적립금취소성공() throws Exception {
+        final String url = "/api/v1/1/cancel";
+
+        int deductPointNo = 1;
+
+        Member member = new Member();
+        member.setRewardPoints(50);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header(MEMBER_ID_HEADER, "12345")
+                        .param("deductPointNo", String.valueOf(deductPointNo))
+                        .content(gson.toJson(memberRequest(100)))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("[API][POST] 회원별 적립금 사용 취소 - 포인트가 음수")
+    public void 회원별적립금취소실패_포인트가음수() throws Exception {
+        final String url = "/api/v1/1/cancel";
+
+        int deductPointNo = 1;
+
+        Member member = new Member();
+        member.setRewardPoints(50);
+
+        // when
+        final ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post(url)
+                        .header(MEMBER_ID_HEADER, "12345")
+                        .param("deductPointNo", String.valueOf(deductPointNo))
+                        .content(gson.toJson(memberRequest(-100)))
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
