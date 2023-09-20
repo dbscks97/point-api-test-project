@@ -9,6 +9,7 @@ import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.service.CancelPointServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("회원별 적립금 사용취소 API")
 public class CancelPointServiceImplTest {
 
     @InjectMocks
@@ -45,7 +47,7 @@ public class CancelPointServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        // Given: Mock 데이터 설정
+        // given
         testMember = new Member();
         testMember.setMemberId(1L);
         testMember.setMemberName("12345");
@@ -85,17 +87,17 @@ public class CancelPointServiceImplTest {
         History history1 = new History();
         history1.setHistoryId(1L);
         history1.setMember(testMember);
-        history1.setPoints(30); // 사용 이력
-        history1.setType("use"); // 사용 이력 유형
-        history1.setDeductPointNo(1); // 수정: deductPointNo 설정
+        history1.setPoints(30);
+        history1.setType("use");
+        history1.setDeductPointNo(1);
         historyList.add(history1);
 
         History history2 = new History();
         history2.setHistoryId(2L);
         history2.setMember(testMember);
-        history2.setPoints(20); // 사용 이력
-        history2.setType("use"); // 사용 이력 유형
-        history2.setDeductPointNo(2); // 수정: deductPointNo 설정
+        history2.setPoints(20);
+        history2.setType("use");
+        history2.setDeductPointNo(2);
         historyList.add(history2);
 
         when(historyRepository.findByMemberAndTypeAndDeductPointNo(testMember, "use", 1)).thenReturn(historyList);
@@ -103,17 +105,15 @@ public class CancelPointServiceImplTest {
 
         // when
         CompletableFuture<Void> future = cancelPointService.cancelPointsAsync(testMember.getMemberId(), testMember.getMemberName(), 30, 1);
-        future.join(); // CompletableFuture를 기다림
+        future.join();
 
-        // 포인트가 제대로 취소되었는지 확인
-        assertThat(testMember.getRewardPoints()).isEqualTo(50); // 보상 포인트는 그대로여야 함
-        assertThat(history1.getPoints()).isEqualTo(0); // history1의 포인트는 0이어야 함
-        assertThat(history2.getPoints()).isEqualTo(20); // history2의 포인트는 20이어야 함
+        // then
+        assertThat(testMember.getRewardPoints()).isEqualTo(50);
+        assertThat(history1.getPoints()).isEqualTo(0);
+        assertThat(history2.getPoints()).isEqualTo(20);
 
-        // 멤버 정보가 한 번 저장되었는지 확인
         verify(memberRepository, times(1)).save(testMember);
 
-        // 메시지가 한 번 전송되었는지 확인
         verify(cancelQueueSender, times(1)).sendCancelMessage(testMember.getMemberId(), 30);
     }
 }

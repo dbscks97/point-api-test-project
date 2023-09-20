@@ -8,6 +8,8 @@ import com.marketboro.Premission.messaging.senders.AccrueQueueSender;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,10 @@ public class AccruePointServiceImpl implements AccruePointService {
         this.memberServiceImpl = memberServiceImpl;
     }
 
+    @Retryable(
+            value = { Exception.class },
+            maxAttempts = 3, // 최대 재시도 횟수
+            backoff = @Backoff(delay = 1000))
     @Async
     @Transactional
     public CompletableFuture<Void> accruePointsAsync(Long memberId, String memberName,int points) {
@@ -63,9 +69,13 @@ public class AccruePointServiceImpl implements AccruePointService {
         history.setHistoryDate(accrueDate);
         historyRepository.save(history);
 
-        // 비동기적으로 적립 메시지를 RabbitMQ에 전송
-        accrueQueueSender.sendAccrueMessage(memberId, points);
-
+        try {
+            // 비동기적으로 적립 메시지를 RabbitMQ에 전송
+            accrueQueueSender.sendAccrueMessage(memberId, points);
+        } catch (Exception e) {
+            // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
+            throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);
+        }
         // CompletableFuture.completedFuture를 사용하여 비동기 작업이 완료되었음을 알립니다.
         return CompletableFuture.completedFuture(null);
     }

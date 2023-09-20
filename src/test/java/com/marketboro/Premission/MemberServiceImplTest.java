@@ -11,6 +11,7 @@ import com.marketboro.Premission.response.MemberResponse;
 import com.marketboro.Premission.service.HistoryServiceImpl;
 import com.marketboro.Premission.service.MemberServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("회원별 적립금 조회 API")
 public class MemberServiceImplTest {
 
     @Mock

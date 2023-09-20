@@ -15,6 +15,7 @@ public enum MemberErrorResult {
     NEGATIVE_POINTS(HttpStatus.BAD_REQUEST, "Negative Points"),
     INSUFFICIENT_POINTS(HttpStatus.BAD_REQUEST, "Insufficient Points"),
 
+    FAIL_TO_MESSAGE(HttpStatus.INTERNAL_SERVER_ERROR,"Failed to send Message"),
     ;
 
     private final HttpStatus httpStatus;

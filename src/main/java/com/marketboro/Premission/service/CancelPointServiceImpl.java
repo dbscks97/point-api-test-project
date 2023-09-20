@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +37,10 @@ public class CancelPointServiceImpl implements CancelPointService{
         this.cancelQueueSender = cancelQueueSender;
     }
 
+    @Retryable(
+            value = { Exception.class },
+            maxAttempts = 3, // 최대 재시도 횟수
+            backoff = @Backoff(delay = 1000))
     @Transactional
     @Async
     public CompletableFuture<Void> cancelPointsAsync(Long memberId, String memberName, int pointsToCancel, int deductPointNo) {
@@ -78,7 +84,12 @@ public class CancelPointServiceImpl implements CancelPointService{
             member.setRewardPoints(member.getRewardPoints() + totalPointsCanceled);
             memberRepository.save(member);
 
-            cancelQueueSender.sendCancelMessage(memberId, totalPointsCanceled);
+            try {
+                cancelQueueSender.sendCancelMessage(memberId, totalPointsCanceled);
+            } catch (Exception e) {
+                // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
+                throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);
+            }
         }
 
         return CompletableFuture.completedFuture(null);

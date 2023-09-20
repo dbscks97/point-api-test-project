@@ -8,6 +8,8 @@ import com.marketboro.Premission.messaging.senders.UseQueueSender;
 import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Retryable(
+        value = { Exception.class },
+        maxAttempts = 3, // 최대 재시도 횟수
+        backoff = @Backoff(delay = 1000))
 @Service
 @Transactional(readOnly = true)
 public class UsePointServiceImpl implements UsePointService {
@@ -79,7 +85,14 @@ public class UsePointServiceImpl implements UsePointService {
             remainingPointsToUse -= pointsToDeduct;
         }
 
-        useQueueSender.sendUseMessage(memberId, pointsToUse);
+        try {
+            // 비동기적으로 적립 메시지를 RabbitMQ에 전송
+            useQueueSender.sendUseMessage(memberId, pointsToUse);
+        } catch (Exception e) {
+            // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
+            throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);
+        }
+
 
         return CompletableFuture.completedFuture(null);
     }

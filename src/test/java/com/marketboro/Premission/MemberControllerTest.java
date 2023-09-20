@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("API 컨트롤러 테스트")
 public class MemberControllerTest {
 
     @InjectMocks
@@ -69,7 +70,6 @@ public class MemberControllerTest {
                 .points(points)
                 .build();
     }
-    // 이 메서드는 결과에서 다음 페이지 토큰을 추출합니다.
     private String extractNextPageToken(ResultActions resultActions) throws Exception {
         String content = resultActions.andReturn().getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(content);
@@ -231,7 +231,6 @@ public class MemberControllerTest {
         final int pageSize = 10;
 
         // when
-        // 첫 번째 페이지를 조회합니다.
         final ResultActions firstPageResult = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
                         .header(MEMBER_ID_HEADER, "12345")
@@ -242,14 +241,12 @@ public class MemberControllerTest {
         // then
         firstPageResult.andExpect(status().isOk());
 
-        // 첫 번째 페이지 결과에서 다음 페이지 토큰을 추출합니다.
         String nextPageToken = extractNextPageToken(firstPageResult);
 
-        // 다음 페이지를 조회합니다.
         final ResultActions nextPageResult = mockMvc.perform(
                 MockMvcRequestBuilders.get(url)
                         .header(MEMBER_ID_HEADER, "12345")
-                        .param("page", nextPageToken) // 다음 페이지 토큰 사용
+                        .param("page", nextPageToken)
                         .param("size", String.valueOf(pageSize))
         );
 

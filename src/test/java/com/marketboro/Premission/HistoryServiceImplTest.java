@@ -8,6 +8,7 @@ import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.service.HistoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("회원별 적립금 적립/사용 내역 조회 API")
 public class HistoryServiceImplTest {
 
     @InjectMocks
@@ -40,7 +42,7 @@ public class HistoryServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        // Given: Mock 데이터 설정
+        // given
         testMember = new Member();
         testMember.setMemberId(1L);
         testMember.setMemberName("12345");

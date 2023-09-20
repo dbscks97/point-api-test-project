@@ -10,6 +10,7 @@ import com.marketboro.Premission.repository.HistoryRepository;
 import com.marketboro.Premission.repository.MemberRepository;
 import com.marketboro.Premission.service.UsePointServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("회원별 적립금 사용 API")
 public class UsePointServiceImplTest {
 
     @InjectMocks
@@ -41,7 +43,7 @@ public class UsePointServiceImplTest {
     private Member testMember;
     @BeforeEach
     public void setUp() {
-        // Given: Mock 데이터 설정
+        // given
         testMember = new Member();
         testMember.setMemberId(1L);
         testMember.setMemberName("12345");
@@ -75,6 +77,7 @@ public class UsePointServiceImplTest {
     }
     @Test
     public void 포인트사용성공() {
+        // given
         Member member = new Member();
         member.setMemberId(1L);
         member.setMemberName("12345");
@@ -98,11 +101,13 @@ public class UsePointServiceImplTest {
         when(historyRepository.findByMember(member)).thenReturn(historyList);
 
 
+        // when
         CompletableFuture<Void> result = usePointService.usePointsAsync(1L, testMember.getMemberName(),150);
 
         result.join();
 
 
+        // then
         verify(historyRepository, times(1)).save(history1);
         verify(historyRepository, times(1)).save(history2);
 
