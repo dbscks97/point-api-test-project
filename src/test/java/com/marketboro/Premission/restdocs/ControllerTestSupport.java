@@ -32,7 +32,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.mockito.Mockito.when;
@@ -59,6 +60,7 @@ public class ControllerTestSupport {
 
     protected Gson gson;
 
+    @Transactional
     @BeforeEach
     void setUp(
             final WebApplicationContext context,
@@ -78,17 +80,18 @@ public class ControllerTestSupport {
         mockMember.setRewardPoints(10000);
         memberRepository.save(mockMember);
 
-        History mockHistory = new History();
-        mockHistory.setHistoryId(1L);
-        mockHistory.setPoints(100);
-        mockHistory.setType("적립");
-        mockHistory.setCreatedAt(new Date());
-        mockHistory.setUpdatedAt(new Date());
-        historyRepository.save(mockHistory);
-    }
+        Calendar calendar = Calendar.getInstance();
+        Date accrueDate = calendar.getTime();
 
-    protected String objectToJsonString(final Object value) throws IOException {
-        return objectMapper.writeValueAsString(value);
+        History history = new History();
+        history.setHistoryId(1L);
+        history.setPoints(1000);
+        history.setCreatedAt(LocalDateTime.now());
+        history.setUpdatedAt(LocalDateTime.now());
+        history.setHistoryDate(accrueDate);
+        history.setType("적립");
+        history.setMember(mockMember);
+        historyRepository.save(history);
     }
 
     protected MemberRequest memberRequest(int points) {

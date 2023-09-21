@@ -1,13 +1,19 @@
 package com.marketboro.Premission.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "histories")
 public class History {
     @Id
@@ -27,9 +33,9 @@ public class History {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int deductPointNo;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedAt;
 }

@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,12 +88,11 @@ public class UsePointServiceImplTest {
         History history1 = new History();
         history1.setMember(member);
         history1.setPoints(100);
-        history1.setCreatedAt(new Date());
-
+        history1.setCreatedAt(LocalDateTime.now());
         History history2 = new History();
         history2.setMember(member);
         history2.setPoints(200);
-        history2.setCreatedAt(new Date());
+        history2.setCreatedAt(LocalDateTime.now());
 
         List<History> historyList = new ArrayList<>();
         historyList.add(history1);

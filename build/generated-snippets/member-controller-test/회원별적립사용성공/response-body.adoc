@@ -1,7 +1,0 @@
-[source,json,options="nowrap"]
-----
-{
-  "code" : "0000",
-  "message" : "Success"
-}
-----

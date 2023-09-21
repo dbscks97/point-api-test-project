@@ -1,8 +1,0 @@
-.+/api/v1/{memberId}/use+
-|===
-|Parameter|Description
-
-|`+memberId+`
-|회원번호
-
-|===

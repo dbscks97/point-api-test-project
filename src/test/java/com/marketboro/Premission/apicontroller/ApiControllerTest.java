@@ -16,13 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
 import static com.marketboro.Premission.controller.MemberConstants.MEMBER_ID_HEADER;
 import static com.marketboro.Premission.restdocs.RestDocsCommonField.CODE;
 import static com.marketboro.Premission.restdocs.RestDocsCommonField.MESSAGE;
-import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureRestDocs
 @ExtendWith({RestDocumentationExtension.class})
+@Transactional
 @DisplayName("API 컨트롤러 테스트")
 public class ApiControllerTest extends ControllerTestSupport {
     @InjectMocks
@@ -53,6 +54,7 @@ public class ApiControllerTest extends ControllerTestSupport {
 
 
     @Test
+    @Transactional
     @DisplayName("[API][GET] 회원별 적립금 합계 조회 - 성공")
     public void 적립금조회성공() throws Exception {
         // given
@@ -84,6 +86,7 @@ public class ApiControllerTest extends ControllerTestSupport {
 
 
     @Test
+    @Transactional
     @DisplayName("[API][POST] 회원별 적립금 적립 - 성공")
     public void 회원별적립성공() throws Exception {
         // given
@@ -120,21 +123,11 @@ public class ApiControllerTest extends ControllerTestSupport {
 
 
     @Test
+    @Transactional
     @DisplayName("[API][GET] 회원별 적립금/사용 내역 조회[페이징] - 성공")
     public void 적립금사용내역조회성공() throws Exception {
         // given
         final Long memberId = 1L;
-
-        Member member = memberRepository.findByMemberId(memberId);
-
-        // History 데이터 생성
-        History history = new History();
-        history.setPoints(1000);
-        history.setCreatedAt(new Date());
-        history.setUpdatedAt(new Date());
-        history.setType("적립");
-        history.setMember(member);
-        historyRepository.save(history);
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -162,6 +155,7 @@ public class ApiControllerTest extends ControllerTestSupport {
     }
 
     @Test
+    @Transactional
     @DisplayName("[API][POST] 회원별 적립금 사용 - 성공")
     public void 회원별적립사용성공() throws Exception {
         // given
@@ -197,6 +191,7 @@ public class ApiControllerTest extends ControllerTestSupport {
 
 
     @Test
+    @Transactional
     @DisplayName("[API][POST] 회원별 적립금 사용 취소 - 성공")
     public void 회원별적립금취소성공() throws Exception {
         final Long memberId = 1L;

@@ -54,17 +54,10 @@ public class AccruePointServiceImpl implements AccruePointService {
         if (point <= 0) {
             throw new MemberException(MemberErrorResult.NEGATIVE_POINTS);
         }
-        // 적립금의 유효기간 설정 (적립 전에 설정)
-        Calendar calendar = Calendar.getInstance();
-        Date accrueDate = calendar.getTime();
+
 
         member.setRewardPoints(member.getRewardPoints() + point);
 
-        History history = new History();
-        history.setMember(member);
-        history.setPoints(point);
-        history.setHistoryDate(accrueDate);
-        historyRepository.save(history);
 
         try {
             // 비동기적으로 적립 메시지를 RabbitMQ에 전송

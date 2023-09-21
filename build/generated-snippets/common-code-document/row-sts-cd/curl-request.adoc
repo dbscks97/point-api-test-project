@@ -1,5 +1,0 @@
-[source,bash]
-----
-$ curl 'http://localhost:8500/test/common/pointHistoryResponseType' -i -X GET \
-    -H 'Content-Type: application/json'
-----

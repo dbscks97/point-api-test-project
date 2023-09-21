@@ -2,6 +2,8 @@ package com.marketboro.Premission.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class HistoryDto {
         public Long historyId;
         public int points;
         public String type;
-        public Date createdAt;
-        public Date updatedAt;
+        public LocalDateTime createdAt;
+        public LocalDateTime updatedAt;
     }
 }

@@ -1,0 +1,14 @@
+=== 회원별 포인트 조회
+operation::api-controller-test/적립금조회성공[snippets='http-request,http-response,response-fields']
+
+=== 회원별 포인트 적립/사용내역 조회
+operation::api-controller-test/적립금사용내역조회성공[snippets='http-request,http-response,response-fields']
+
+=== 회원별 포인트 적립
+operation::api-controller-test/회원별적립성공[snippets='path-parameters,http-request,http-response,response-fields']
+
+=== 회원별 포인트 사용
+operation::api-controller-test/회원별적립사용성공[snippets='path-parameters,curl-request,http-request,http-response,response-fields']
+
+=== 회원별 포인트 사용 취소
+operation::api-controller-test/회원별적립금취소성공[snippets='path-parameters,http-request,http-response,response-fields']

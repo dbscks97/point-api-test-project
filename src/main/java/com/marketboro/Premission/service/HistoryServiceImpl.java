@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class HistoryServiceImpl implements HistoryService {
     private final HistoryRepository historyRepository;
     private final MemberRepository memberRepository;
@@ -64,6 +64,7 @@ public class HistoryServiceImpl implements HistoryService {
         }
     }
 
+    @Transactional
     public List<History> getPagedUsageHistoryByMemberId(Long memberId, String memberName, Pageable pageable) {
         final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
         final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));

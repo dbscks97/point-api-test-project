@@ -46,7 +46,7 @@ asciidoctor.doFirst {
 task createDocument(type: Copy){
 	dependsOn asciidoctor
 	from file("build/docs/asciidoc")
-	into file("src/main/resources/static/docs")
+	into file("src/main/resources/static")
 }
 
 bootJar {
@@ -76,7 +76,7 @@ dependencies {
 
 	//RabbitMQ
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	asciidoctorExt 'org.springframework.restdocs:spring-restodc-asciidoctor'
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
 }
 

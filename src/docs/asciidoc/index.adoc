@@ -1,0 +1,8 @@
+= 포인트 API REST Docs
+:doctype: book
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+include::point-API-adoc[]

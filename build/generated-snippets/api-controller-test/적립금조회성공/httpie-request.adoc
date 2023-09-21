@@ -1,6 +1,0 @@
-[source,bash]
-----
-$ http GET 'http://localhost:8500/api/v1/1/points' \
-    'Content-Type:application/json' \
-    'X-MEMBER-ID:12345'
-----

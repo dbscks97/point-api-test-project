@@ -1,8 +1,0 @@
-[source,bash]
-----
-$ echo '{
-  "points" : 1000
-}' | http POST 'http://localhost:8500/api/v1/1/accrue?point=1000' \
-    'Content-Type:application/json' \
-    'X-MEMBER-ID:12345'
-----
