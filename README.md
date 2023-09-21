@@ -12,7 +12,8 @@ java -jar build/libs/Premission-0.0.1-SNAPSHOT.jar
 - java -jar Premission-0.0.1-SNAPSHOT.jar
 
 ## API 호출
-- [Spring Rest Docs](http://13.125.227.54:8080/)(클릭)
+- <a href="http://13.125.227.54:8080" target="_blank"> Spring Rest Docs </a>
+
 
 # 프로젝트 설명
 - JAVA 17, SpringBoot 3.1.3
