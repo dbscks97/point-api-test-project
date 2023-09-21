@@ -8,8 +8,7 @@ jar 생성 및 실행
 java -jar build/libs/Premission-0.0.1-SNAPSHOT.jar
 ```
 
-## jar 다운로드 및 서버 실행
-- [jar 다운로드]
+## jar 서버 실행
 - java -jar Premission-0.0.1-SNAPSHOT.jar
 
 ## API 호출
