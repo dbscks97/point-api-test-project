@@ -1,0 +1,8 @@
+.+/api/v1/{memberId}/accrue+
+|===
+|Parameter|Description
+
+|`+memberId+`
+|회원번호
+
+|===

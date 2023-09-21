@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="회원별 적립금 조회 API" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-09-21T11:59:01" hostname="bag-yunchan-ui-MacBookAir.local" time="0.007">
+  <properties/>
+  <testcase name="회원적립금조회불일치()" classname="com.marketboro.Premission.application.MemberServiceImplTest" time="0.002"/>
+  <testcase name="적립금만료기간이안됐을때테스트()" classname="com.marketboro.Premission.application.MemberServiceImplTest" time="0.001"/>
+  <testcase name="회원적립금조회일치()" classname="com.marketboro.Premission.application.MemberServiceImplTest" time="0.0"/>
+  <testcase name="회원적립금조회실패_본인아님()" classname="com.marketboro.Premission.application.MemberServiceImplTest" time="0.001"/>
+  <testcase name="적립금만료테스트()" classname="com.marketboro.Premission.application.MemberServiceImplTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

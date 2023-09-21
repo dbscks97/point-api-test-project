@@ -1,0 +1,8 @@
+.+/api/v1/{memberId}/cancel+
+|===
+|Parameter|Description
+
+|`+memberId+`
+|회원번호
+
+|===

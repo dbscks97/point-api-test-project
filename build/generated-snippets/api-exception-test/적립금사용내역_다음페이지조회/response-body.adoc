@@ -1,0 +1,16 @@
+[source,json,options="nowrap"]
+----
+{
+  "code" : "0000",
+  "message" : "Success",
+  "data" : {
+    "history" : [ {
+      "historyId" : 33,
+      "points" : 1000,
+      "type" : "적립",
+      "createdAt" : "2023-09-21T20:59:00.744078",
+      "updatedAt" : "2023-09-21T20:59:00.744087"
+    } ]
+  }
+}
+----

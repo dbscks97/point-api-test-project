@@ -1,0 +1,8 @@
+|===
+|Path|Type|Description
+
+|`+points+`
+|`+class java.lang.Integer+`
+|적립 포인트
+
+|===

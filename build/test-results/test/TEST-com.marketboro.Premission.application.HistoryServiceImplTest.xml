@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="회원별 적립금 적립/사용 내역 조회 API" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-09-21T11:59:01" hostname="bag-yunchan-ui-MacBookAir.local" time="0.007">
+  <properties/>
+  <testcase name="포인트적립및사용내역_본인이아님()" classname="com.marketboro.Premission.application.HistoryServiceImplTest" time="0.001"/>
+  <testcase name="포인트적립및사용내역_회원존재하지않음()" classname="com.marketboro.Premission.application.HistoryServiceImplTest" time="0.001"/>
+  <testcase name="포인트적립및사용내역조회성공()" classname="com.marketboro.Premission.application.HistoryServiceImplTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

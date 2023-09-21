@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="회원별 적립금 사용 API" tests="3" skipped="0" failures="0" errors="0" timestamp="2023-09-21T11:59:02" hostname="bag-yunchan-ui-MacBookAir.local" time="0.03">
+  <properties/>
+  <testcase name="포인트사용실패_본인이아님()" classname="com.marketboro.Premission.application.UsePointServiceImplTest" time="0.027"/>
+  <testcase name="포인트사용성공()" classname="com.marketboro.Premission.application.UsePointServiceImplTest" time="0.001"/>
+  <testcase name="포인트사용실패_회원존재하지않음()" classname="com.marketboro.Premission.application.UsePointServiceImplTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
