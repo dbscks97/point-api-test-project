@@ -13,6 +13,7 @@ java {
 }
 
 configurations {
+	asciidoctorExt
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -24,6 +25,35 @@ repositories {
 
 ext {
 	set('snippetsDir', file("build/generated-snippets"))
+}
+
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
+asciidoctor {
+	configurations 'asciidoctorExt'
+	baseDirFollowsSourceFile()
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+
+task createDocument(type: Copy){
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+
+bootJar {
+	dependsOn createDocument
+	from("${asciidoctor.outputDir}"){
+		into 'static/docs'
+	}
 }
 
 dependencies {
@@ -38,7 +68,6 @@ dependencies {
 	testImplementation 'org.springframework.amqp:spring-rabbit-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-
 	// Spring Boot Starter Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -47,6 +76,7 @@ dependencies {
 
 	//RabbitMQ
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	asciidoctorExt 'org.springframework.restdocs:spring-restodc-asciidoctor'
 
 }
 

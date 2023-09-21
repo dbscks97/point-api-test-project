@@ -1,0 +1,6 @@
+[source,http,options="nowrap"]
+----
+GET /api/v1/-1/point-history HTTP/1.1
+Host: localhost:8500
+
+----

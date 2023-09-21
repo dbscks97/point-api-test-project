@@ -17,9 +17,9 @@ public class AccrueQueueSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendAccrueMessage(Long memberId, int points) {
+    public void sendAccrueMessage(Long memberId, String memberName, int points) {
         // accrueQueue로 메시지 발송
-        String message = memberId + " - " + points;
+        String message = memberId + "" + memberName + "" + points;
         rabbitTemplate.convertAndSend(accrueQueueName, message);
         System.out.println("Sent message to accrueQueue: " + message);
     }

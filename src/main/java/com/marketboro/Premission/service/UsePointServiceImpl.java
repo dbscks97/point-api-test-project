@@ -1,5 +1,6 @@
 package com.marketboro.Premission.service;
 
+import com.marketboro.Premission.dto.PointDto;
 import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.enums.MemberErrorResult;
@@ -31,7 +32,6 @@ public class UsePointServiceImpl implements UsePointService {
     private final HistoryRepository historyRepository;
 
     private final UseQueueSender useQueueSender;
-    private final MemberServiceImpl memberService;
 
 
     @Autowired
@@ -39,12 +39,11 @@ public class UsePointServiceImpl implements UsePointService {
         this.memberRepository = memberRepository;
         this.historyRepository = historyRepository;
         this.useQueueSender = useQueueSender;
-        this.memberService = memberService;
     }
 
     @Async
     @Transactional
-    public CompletableFuture<Void> usePointsAsync(Long memberId, String memberName, int pointsToUse) {
+    public CompletableFuture<PointDto.UsePointResponse> usePointsAsync(Long memberId, String memberName, int pointsToUse) {
         final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
         final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
 
@@ -61,11 +60,9 @@ public class UsePointServiceImpl implements UsePointService {
         int remainingPointsToUse = pointsToUse;
         int availablePoints = member.getRewardPoints(); // 보유포인트 가져오기
 
-
         if (pointsToUse > availablePoints) {
             throw new MemberException(MemberErrorResult.INSUFFICIENT_POINTS); // 보유포인트보다 많이 사용할 때 예외 던지기
         }
-
 
         for (History history : historyList) {
             if (remainingPointsToUse <= 0) {
@@ -87,13 +84,15 @@ public class UsePointServiceImpl implements UsePointService {
 
         try {
             // 비동기적으로 적립 메시지를 RabbitMQ에 전송
-            useQueueSender.sendUseMessage(memberId, pointsToUse);
+            useQueueSender.sendUseMessage(memberId, memberName, pointsToUse);
         } catch (Exception e) {
             // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
             throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);
         }
 
+        PointDto.UsePointResponse response = new PointDto.UsePointResponse();
+        response.setPointsUsed(pointsToUse);
 
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(response);
     }
 }

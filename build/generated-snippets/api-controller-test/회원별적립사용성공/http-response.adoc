@@ -1,0 +1,15 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 112
+
+{
+  "code" : "0000",
+  "message" : "Success",
+  "data" : {
+    "pointsUsed" : 100,
+    "deductPointNo" : 0
+  }
+}
+----

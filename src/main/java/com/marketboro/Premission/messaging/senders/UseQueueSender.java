@@ -17,9 +17,9 @@ public class UseQueueSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendUseMessage(Long memberId, int pointsToUse) {
+    public void sendUseMessage(Long memberId, String memberName, int pointsToUse) {
         // useQueue로 메시지 발송
-        String message = memberId + " - " + pointsToUse;
+        String message = memberId + "" + memberName + "" + pointsToUse;
         rabbitTemplate.convertAndSend(useQueueName, message);
         System.out.println("Sent message to useQueue: " + message);
     }

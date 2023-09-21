@@ -1,0 +1,32 @@
+|===
+|Path|Type|Description
+
+|`+data.history[].historyId+`
+|`+Number+`
+|적립금/사용 내역 식별자
+
+|`+data.history[].points+`
+|`+Number+`
+|적립/사용 금액
+
+|`+data.history[].type+`
+|`+Null+`
+|내역 구분
+
+|`+data.history[].createdAt+`
+|`+Null+`
+|등록 일자
+
+|`+data.history[].updatedAt+`
+|`+Null+`
+|수정 일자
+
+|`+code+`
+|`+String+`
+|결과코드
+
+|`+message+`
+|`+String+`
+|결과메시지
+
+|===

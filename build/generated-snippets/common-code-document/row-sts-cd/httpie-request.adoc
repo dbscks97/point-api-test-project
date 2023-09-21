@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ http GET 'http://localhost:8500/test/common/pointHistoryResponseType' \
+    'Content-Type:application/json'
+----

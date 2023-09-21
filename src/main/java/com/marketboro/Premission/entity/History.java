@@ -25,6 +25,7 @@ public class History {
 
     private String type;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int deductPointNo;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;

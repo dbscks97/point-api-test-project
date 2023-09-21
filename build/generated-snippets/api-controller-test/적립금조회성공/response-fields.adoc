@@ -1,0 +1,16 @@
+|===
+|Path|Type|Description
+
+|`+data.points+`
+|`+class java.lang.Integer+`
+|적립금 합계
+
+|`+code+`
+|`+String+`
+|결과코드
+
+|`+message+`
+|`+String+`
+|결과메시지
+
+|===

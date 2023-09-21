@@ -1,0 +1,8 @@
+.+/api/v1/{memberId}/points+
+|===
+|Parameter|Description
+
+|`+memberId+`
+|회원번호
+
+|===

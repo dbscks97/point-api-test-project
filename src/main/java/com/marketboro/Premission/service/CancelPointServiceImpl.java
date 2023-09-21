@@ -1,5 +1,6 @@
 package com.marketboro.Premission.service;
 
+import com.marketboro.Premission.dto.PointDto;
 import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.enums.MemberErrorResult;
@@ -43,7 +44,7 @@ public class CancelPointServiceImpl implements CancelPointService{
             backoff = @Backoff(delay = 1000))
     @Transactional
     @Async
-    public CompletableFuture<Void> cancelPointsAsync(Long memberId, String memberName, int pointsToCancel, int deductPointNo) {
+    public CompletableFuture<PointDto.CancelPointResponse> cancelPointsAsync(Long memberId, String memberName, int pointsToCancel, int deductPointNo) {
         final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
         final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
 
@@ -85,13 +86,17 @@ public class CancelPointServiceImpl implements CancelPointService{
             memberRepository.save(member);
 
             try {
-                cancelQueueSender.sendCancelMessage(memberId, totalPointsCanceled);
+                cancelQueueSender.sendCancelMessage(memberId,memberName ,totalPointsCanceled);
             } catch (Exception e) {
                 // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
                 throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);
             }
         }
 
-        return CompletableFuture.completedFuture(null);
+        PointDto.CancelPointResponse response = new PointDto.CancelPointResponse();
+        response.setPointCanceled(pointsToCancel);
+        response.setDeductPointNo(deductPointNo);
+
+        return CompletableFuture.completedFuture(response);
     }
 }

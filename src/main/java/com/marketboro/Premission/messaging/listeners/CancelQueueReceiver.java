@@ -20,7 +20,7 @@ public class CancelQueueReceiver {
         System.out.println("Received message from cancelQueue: " + message);
 
         // 메시지를 분석하여 취소할 포인트와 deductPointNo를 처리
-        String[] parts = message.split("-");
+        String[] parts = message.split("");
         Long memberId = Long.parseLong(parts[0].trim());
         String memberName = parts[1].trim();
         int pointsToCancel = Integer.parseInt(parts[2].trim());

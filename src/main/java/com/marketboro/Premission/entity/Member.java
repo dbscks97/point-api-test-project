@@ -13,13 +13,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "members")
+@Table(name = "members", uniqueConstraints = @UniqueConstraint(columnNames = "memberName"))
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20,unique = true)
     private String memberName;
 
 

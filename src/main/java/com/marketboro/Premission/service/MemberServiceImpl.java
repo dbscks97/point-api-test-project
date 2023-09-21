@@ -1,5 +1,7 @@
 package com.marketboro.Premission.service;
 
+import com.marketboro.Premission.dto.PointDto;
+import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.enums.MemberErrorResult;
 import com.marketboro.Premission.exception.MemberException;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -30,7 +33,7 @@ public class MemberServiceImpl implements MemberService {
 
     }
 
-    public MemberResponse getPoints(Long memberId, String memberName) {
+    public PointDto.GetPointsResponse getPoints(Long memberId, String memberName) {
         final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
         final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
 
@@ -38,13 +41,10 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberErrorResult.NOT_MEMBER_OWNER);
         }
 
-        return MemberResponse.builder()
-                .memberId(member.getMemberId())
-                .memberName(member.getMemberName())
-                .rewardPoints(member.getRewardPoints())
-                .build();
+        PointDto.GetPointsResponse response = new PointDto.GetPointsResponse();
+        response.setPoints(member.getRewardPoints());
 
+        return response;
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.marketboro.Premission.service;
 
+import com.marketboro.Premission.dto.HistoryDto;
 import com.marketboro.Premission.entity.History;
 import com.marketboro.Premission.entity.Member;
 import com.marketboro.Premission.enums.MemberErrorResult;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -62,18 +64,17 @@ public class HistoryServiceImpl implements HistoryService {
         }
     }
 
-    public Page<History> getPagedUsageHistoryByMemberId(Long memberId, String memberName, Pageable pageable) {
-        Member member = memberRepository.findByMemberId(memberId);
-        if (member == null) {
-            throw new MemberException(MemberErrorResult.MEMBER_NOT_FOUND);
-        }
+    public List<History> getPagedUsageHistoryByMemberId(Long memberId, String memberName, Pageable pageable) {
+        final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
+        final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
 
-        // 본인 확인 로직 추가
         if (!member.getMemberName().equals(memberName)) {
             throw new MemberException(MemberErrorResult.NOT_MEMBER_OWNER);
         }
 
-        return historyRepository.findByMemberMemberIdAndMemberMemberNameOrderByHistoryDateDesc(memberId, memberName, pageable);
+        List<History> userPointHistory = historyRepository.findByMemberMemberIdOrderByHistoryDateDesc(memberId, pageable);
+
+        return userPointHistory;
     }
 
 }

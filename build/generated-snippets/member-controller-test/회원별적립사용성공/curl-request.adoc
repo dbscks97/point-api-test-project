@@ -1,0 +1,9 @@
+[source,bash]
+----
+$ curl 'http://localhost:8500/api/v1/1/use?pointsToUse=100' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'X-MEMBER-ID: 12345' \
+    -d '{
+  "points" : 100
+}'
+----

@@ -17,9 +17,9 @@ public class CancelQueueSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendCancelMessage(Long memberId, int pointsToCancel) {
+    public void sendCancelMessage(Long memberId, String memberName, int pointsToCancel) {
         // cancelQueue로 메시지 발송
-        String message = memberId + " - " + pointsToCancel;
+        String message = memberId + "" + memberName + "" + pointsToCancel;
         rabbitTemplate.convertAndSend(cancelQueueName, message);
         System.out.println("Sent message to cancelQueue: " + message);
     }

@@ -27,18 +27,15 @@ public class AccruePointServiceImpl implements AccruePointService {
     private final HistoryRepository historyRepository;
     private final MemberRepository memberRepository;
     private final AccrueQueueSender accrueQueueSender;
-    private final MemberServiceImpl memberServiceImpl;
 
     @Autowired
     public AccruePointServiceImpl(
             HistoryRepository historyRepository,
             MemberRepository memberRepository,
-            AccrueQueueSender accrueQueueSender,
-            MemberServiceImpl memberServiceImpl) {
+            AccrueQueueSender accrueQueueSender) {
         this.historyRepository = historyRepository;
         this.memberRepository = memberRepository;
         this.accrueQueueSender = accrueQueueSender;
-        this.memberServiceImpl = memberServiceImpl;
     }
 
     @Retryable(
@@ -47,31 +44,31 @@ public class AccruePointServiceImpl implements AccruePointService {
             backoff = @Backoff(delay = 1000))
     @Async
     @Transactional
-    public CompletableFuture<Void> accruePointsAsync(Long memberId, String memberName,int points) {
+    public CompletableFuture<Void> accruePointsAsync(Long memberId, String memberName,int point) {
         final Optional<Member> optionalMember = Optional.ofNullable(memberRepository.findByMemberId(memberId));
         final Member member = optionalMember.orElseThrow(() -> new MemberException(MemberErrorResult.MEMBER_NOT_FOUND));
 
         if (member.getMemberName() == null || !member.getMemberName().equals(memberName)) {
             throw new MemberException(MemberErrorResult.NOT_MEMBER_OWNER);
         }
-        if (points <= 0) {
+        if (point <= 0) {
             throw new MemberException(MemberErrorResult.NEGATIVE_POINTS);
         }
         // 적립금의 유효기간 설정 (적립 전에 설정)
         Calendar calendar = Calendar.getInstance();
         Date accrueDate = calendar.getTime();
 
-        member.setRewardPoints(member.getRewardPoints() + points);
+        member.setRewardPoints(member.getRewardPoints() + point);
 
         History history = new History();
         history.setMember(member);
-        history.setPoints(points);
+        history.setPoints(point);
         history.setHistoryDate(accrueDate);
         historyRepository.save(history);
 
         try {
             // 비동기적으로 적립 메시지를 RabbitMQ에 전송
-            accrueQueueSender.sendAccrueMessage(memberId, points);
+            accrueQueueSender.sendAccrueMessage(memberId,memberName, point);
         } catch (Exception e) {
             // 메세지 전송 중 예외 발생 시, 재시도를 위해 예외를 다시 던짐
             throw new MemberException(MemberErrorResult.FAIL_TO_MESSAGE);

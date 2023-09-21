@@ -1,0 +1,4 @@
+[source,bash]
+----
+$ curl 'http://localhost:8500/api/v1/-1/point-history' -i -X GET
+----

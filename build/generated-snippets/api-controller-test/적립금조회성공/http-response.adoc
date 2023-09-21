@@ -1,0 +1,14 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 85
+
+{
+  "code" : "0000",
+  "message" : "Success",
+  "data" : {
+    "points" : 10000
+  }
+}
+----

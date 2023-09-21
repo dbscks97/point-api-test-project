@@ -1,0 +1,7 @@
+[source,http,options="nowrap"]
+----
+GET /api/v1/1/point-history?page=0&size=10 HTTP/1.1
+X-MEMBER-ID: 12345
+Host: localhost:8500
+
+----

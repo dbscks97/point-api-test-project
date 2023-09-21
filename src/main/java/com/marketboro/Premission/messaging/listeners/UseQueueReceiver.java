@@ -20,7 +20,7 @@ public class UseQueueReceiver {
         System.out.println("Received message from useQueue: " + message);
 
         // 메시지를 분석하여 사용 포인트를 처리
-        String[] parts = message.split("-");
+        String[] parts = message.split("");
         Long memberId = Long.parseLong(parts[0].trim());
         String memberName = parts[1].trim();
         int pointsToUse = Integer.parseInt(parts[2].trim());

@@ -1,0 +1,7 @@
+|===
+|Name|Description
+
+|`+X-MEMBER-ID+`
+|회원 이름 헤더
+
+|===
