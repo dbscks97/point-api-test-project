@@ -1,2 +1,4 @@
-# marketboro-mission
-마켓보로 사전 과제입니다.
+# 프로젝트 실행 및 API 호출 방법
+
+## gradle 서버 실행
+
