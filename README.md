@@ -3,13 +3,17 @@
 ## gradle 서버 실행
 
 ```c
-# jar 생성 및 실행
+jar 생성 및 실행
 ./gradlew clean bootJar --stacktrace --info --refresh-dependencies -x test -x asciidoctor
 java -jar build/libs/Premission-0.0.1-SNAPSHOT.jar
 ```
 
+## jar 다운로드 및 서버 실행
+- [jar 다운로드]
+- java -jar Premission-0.0.1-SNAPSHOT.jar
+
 ## API 호출
-- [Spring Rest Docs](http://localhost:8080/)(서버 실행 후 클릭)
+- [Spring Rest Docs](http://13.125.227.54:8080/)(클릭)
 
 # 프로젝트 설명
 - JAVA 17, SpringBoot 3.1.3
